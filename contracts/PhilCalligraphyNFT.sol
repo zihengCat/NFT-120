@@ -6,15 +6,21 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721Burnable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/Strings.sol";
 
 /**
- * @title Calligraphy
+ * @title PhilCalligraphyNFT
  * @author Ziheng
- * @notice
  */
-contract JungleGachaNFT is ERC721URIStorage, ERC721Burnable, Ownable {
+contract PhilCalligraphyNFT is ERC721URIStorage, Ownable {
 
-    //  _price is the price of one Crypto Dev NFT
+    /**
+     * @dev _baseTokenURI for computing {tokenURI}. If set, the resulting URI for each
+     * token will be the concatenation of the `baseURI` and the `tokenId`.
+     */
+    string _baseTokenURI;
+
+    //  _price is the price of one NFT
     uint256 public _price = 0.01 ether;
 
     // _paused is used to pause the contract in case of an emergency
@@ -22,6 +28,9 @@ contract JungleGachaNFT is ERC721URIStorage, ERC721Burnable, Ownable {
 
     // total number of tokenIds minted
     uint256 public tokenIds;
+
+    // max number of CryptoDevs
+    uint256 public maxTokenIds = 20;
 
     modifier onlyWhenNotPaused {
         require(!_paused, "Contract currently paused");
@@ -35,18 +44,22 @@ contract JungleGachaNFT is ERC721URIStorage, ERC721Burnable, Ownable {
       * It also initializes an instance of whitelist interface.
       */
     constructor (string memory baseURI)
-        ERC721("Jungle Squad", "???")
+        ERC721("Phil Calligraphy NFT", "PCN")
     {
         _baseTokenURI = baseURI;
+        for (uint i = 0; i <= 10; i++) {
+            _safeMint(msg.sender, tokenIds);
+            tokenIds += 1;
+        }
     }
 
     /**
     * @dev mint allows a user to mint 1 NFT per transaction after the presale has ended.
     */
     function mint() external onlyWhenNotPaused {
-        require(tokenIds < maxTokenIds, "Exceed maximum Crypto Devs supply");
-        tokenIds += 1;
+        require(tokenIds < maxTokenIds, "Exceed maximum supply");
         _safeMint(msg.sender, tokenIds);
+        tokenIds += 1;
     }
 
     /**
