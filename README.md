@@ -1,1 +1,1 @@
-# NFT-120
+# gacha-nft
